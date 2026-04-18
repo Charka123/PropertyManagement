@@ -1,4 +1,34 @@
 <!DOCTYPE html>
+<?php
+require("connect-db.php");
+if ($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $role = $_POST['user_role'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    $mapping = [
+        'tenant' => ['table' => 'tenant', 'id' => 'tenant_id', 'dest' => 'tenant_dashboard.php'],
+        'owner' => ['table' => 'property_owner', 'id' => 'owner_id', 'dest' => 'owner_dashboard.php'],
+        'worker' => ['table' => 'workers', 'id' => 'worker_id', 'dest' => 'worker_dashboard.php'],
+    ];
+
+    $target = $mapping[$role];
+
+    $stmt = $db->prepare("SELECT * FROM {$target['table']} WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
+
+    if($user && password_verify($password, $user['password'])){
+        session_start();
+        $_SESSION['user_id'] = $user[$target['id']];
+        $_SESSION['role'] = $role;
+        header("Location: " . $target['dest']);
+        exit();
+    } else {
+        $error = "Invalid email or password for " . ucfirst($role);
+    }
+}
+?>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
