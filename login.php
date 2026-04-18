@@ -61,5 +61,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST'){
         <br>
         <button type="submit">Sign in</button>
 </form>
+<p>Don't have an account? <a href="register.php">Sign up</a></p>
+<?php if (!empty($error)): ?>
+        <p style="color: red; font-weight: bold;"><?php echo $error; ?></p>
+<?php endif; ?>
 </body>
 </html>
