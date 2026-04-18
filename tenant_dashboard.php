@@ -6,6 +6,6 @@
     <title>Document</title>
 </head>
 <body>
-    <p>Something</p>
+    <h1>Tenant Dashboard</h1>
 </body>
 </html>
