@@ -411,12 +411,12 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
-ALTER TABLE 'request'
-ADD CONSTRAINT 'chk_request_status'
+ALTER TABLE request
+ADD CONSTRAINT chk_request_status
 CHECK (status IN ('Pending', 'In Progress', 'Completed', 'Cancelled'));
 
-ALTER TABLE 'apply'
-ADD CONSTRAINT 'chk_apply_status'
+ALTER TABLE apply
+ADD CONSTRAINT chk_apply_status
 CHECK (status IN ('Submitted', 'Approved', 'Rejected'));
 
 DELIMITER //
