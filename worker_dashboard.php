@@ -1,5 +1,8 @@
 <!DOCTYPE html>
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 require("connect-db.php");
 
@@ -22,6 +25,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         $ins = $db->prepare("INSERT INTO apply (worker_id, request_id, status) VALUES (?, ?, 'Submitted')");
         $ins->execute([$worker_id, $request_id]);
         $success = "Application submitted!";
+    }
+}
+
+// Handle job completion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'complete_job') {
+    $request_id = $_POST['request_id'];
+
+    $del = $db->prepare("DELETE FROM request WHERE request_id = ?");
+
+    if ($del->execute([$request_id])){
+        $success = "Job marked as completed and removed from system.";
+
+        header("Location: worker_dashboard.php?success=Job completed!");
+        exit();
+    } else {
+        $error = "Failed to complete the job. Please try again.";
     }
 }
 
@@ -215,6 +234,23 @@ $applied_ids = array_column($applications, 'request_id');
 
         .spec-tag { display: inline-block; background: var(--accent-light); color: var(--accent); padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; margin-top: 4px; }
 
+        .btn-complete {
+        background: var(--green);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.15s;
+        margin-top: 12px;
+        }
+
+        .btn-complete:hover {
+        background: #15803d;
+        }
+
         @media (max-width: 640px) {
             .stats { grid-template-columns: repeat(2, 1fr); }
             .search-bar { flex-direction: column; }
@@ -368,12 +404,20 @@ $applied_ids = array_column($applications, 'request_id');
             <?php else: ?>
             <?php foreach ($assigned_jobs as $job): ?>
             <div class="card">
+                <div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
                     <span class="badge badge-type"><?php echo htmlspecialchars($job['type']); ?></span>
                 </div>
                 <div class="job-location">📍 <?php echo htmlspecialchars($job['street']); ?></div>
                 <div class="job-desc"><?php echo htmlspecialchars($job['description']); ?></div>
                 <div class="job-meta">Status: <?php echo htmlspecialchars($job['status']); ?> · Date: <?php echo $job['date']; ?></div>
+                </div>
+
+                <form method="POST" onsubmit="return confirm('Mark this job as completed? This will remove it from the system.');">
+                    <input type="hidden" name="action" value="complete_job">
+                    <input type="hidden" name="request_id" value="<?php echo $job['request_id']; ?>">
+                    <button type="submit" class="btn-complete">✓ Mark Completed</button>
+                </form>
             </div>
             <?php endforeach; ?>
             <?php endif; ?>
