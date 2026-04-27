@@ -1,7 +1,7 @@
-<?php $username = 'PASSWORD';
-$password = 'PASSWORD';
+<?php $username = 'app_user';
+$password = 'pmanagement';
 $host = 'localhost';
-$dbname = 'Project';
+$dbname = 'property_management';
 $dsn = "mysql:host=$host;dbname=$dbname";
 
 try{
