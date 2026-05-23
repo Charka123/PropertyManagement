@@ -25,17 +25,15 @@ jobs:
     - name: Run PHP Lint
       run: find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \;
 
-      # 3. Start PHP's web server targeting the PropertyManagement folder
-    
+    # Start PHP's web server directly in the root directory
     - name: Start Built-in Web Server
-      run: php -S 127.0.0.1:8000 -t PropertyManagement &
+      run: php -S 127.0.0.1:8000 &
 
-    # 4. Test login.php directly at the root of that target
+    # Test login.php right at the root level of the server
     - name: Test if login.php loads successfully
       run: |
         sleep 2
         
-        # Now login.php is at the root level of the server because of the -t flag
         STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/login.php)
         
         echo "Login page returned HTTP status code: $STATUS_CODE"
