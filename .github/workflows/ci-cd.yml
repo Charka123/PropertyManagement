@@ -34,11 +34,16 @@ jobs:
       run: |
         sleep 2
         
-        STATUS_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/login.php)
+        # We catch the full HTML output in a temporary file this time
+        STATUS_CODE=$(curl -s -o response.html -w "%{http_code}" http://127.0.0.1:8000/login.php)
         
         echo "Login page returned HTTP status code: $STATUS_CODE"
         
         if [ "$STATUS_CODE" -ne 200 ] && [ "$STATUS_CODE" -ne 302 ]; then
-          echo "Error: login.php failed to load properly!"
+          echo "=============================================="
+          echo "   CRASH DETECTED: PRINTING PHP ERROR LOG     "
+          echo "=============================================="
+          cat response.html # This will print the raw error text to your GitHub screen
+          echo "=============================================="
           exit 1
         fi
