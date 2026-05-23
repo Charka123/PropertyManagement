@@ -1,0 +1,41 @@
+name: PHP Continuous Integration
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  validate-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Download the code from GitHub into the runner
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    # 2. Set up the PHP environment
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        extensions: mbstring, xml, ctype, iconv, mysql, zip
+        tools: composer
+
+    # 3. Cache packages so subsequent runs take seconds instead of minutes
+    - name: Cache Composer Dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.composer/cache/files
+        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-composer-
+
+    # 4. Install your project dependencies
+    - name: Install Dependencies
+      run: composer install --prefer-dist --no-progress
+
+    # 5. Guardrail: Catch typos, missing semicolons, or syntax mistakes
+    - name: Run PHP Lint
+      run: find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \;
