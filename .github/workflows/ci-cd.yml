@@ -25,9 +25,9 @@ jobs:
     - name: Run PHP Lint
       run: find . -name "*.php" ! -path "./vendor/*" -exec php -l {} \;
 
-    # Start PHP's web server directly in the root directory
+    # Start PHP's web server and force it to display errors
     - name: Start Built-in Web Server
-      run: php -S 127.0.0.1:8000 &
+      run: php -d display_errors=1 -S 127.0.0.1:8000 &
 
     # Test login.php right at the root level of the server
     - name: Test if login.php loads successfully
