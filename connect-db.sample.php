@@ -1,17 +1,12 @@
-<?php $username = 'app_user';
-$password = 'pmanagement';
-$host = 'localhost';
-$dbname = 'property_management';
-$dsn = "mysql:host=$host;dbname=$dbname";
+<?php
+/**
+ * SAMPLE CONFIGURATION FILE
+ * Rename this file to 'db-config.php' on your live server 
+ * and fill in your actual production database credentials.
+ */
 
-try{
-    $db = new PDO($dsn, $username, $password);
-    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    echo "<p>An error occurred while connecting to the database: $error_message </p>";
-} catch (Exception $e)       // handle any type of exception
-{
-   $error_message = $e->getMessage();
-   echo "<p>Error message: $error_message </p>";
-}
+if (!defined('DB_SERVER')) define('DB_SERVER', '127.0.0.1');
+if (!defined('DB_USERNAME')) define('DB_USERNAME', 'property_user');
+if (!defined('DB_PASSWORD')) define('DB_PASSWORD', 'YOUR_SECURE_PASSWORD_HERE');
+if (!defined('DB_NAME')) define('DB_NAME', 'property_management');
 ?>
