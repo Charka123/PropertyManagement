@@ -47,3 +47,23 @@ jobs:
           echo "=============================================="
           exit 1
         fi
+  
+deploy:
+    needs: validate-and-test # This forces the pipeline to only deploy if all tests pass!
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Deploy to GCP via Rsync
+      uses: AEnterprise/rsync-deploy@v1.0.2
+      env:
+        DEPLOY_KEY: ${{ secrets.SERVER_SSH_KEY }}
+        ARGS: "-avzr --delete --exclude='.git*' --exclude='.github*' --exclude='db-config.php'"
+        SERVER_PORT: "22"
+        FOLDER: "./" 
+        SERVER_IP: ${{ secrets.SERVER_IP }}
+        USERNAME: ${{ secrets.SERVER_USER }}
+        SERVER_DESTINATION: "/var/www/html/" # The Apache folder we configured earlier
