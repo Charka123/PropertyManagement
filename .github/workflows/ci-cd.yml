@@ -47,8 +47,7 @@ jobs:
           echo "=============================================="
           exit 1
         fi
-  
-deploy:
+  deploy:
     needs: validate-and-test # This forces the pipeline to only deploy if all tests pass!
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
