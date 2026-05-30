@@ -9,5 +9,5 @@
 
 4. Once running go to http://localhost/PropertyManagement/login.php
 
-# Deployed App
+## Deployed App
 The app has been deployed onto the Internet via a GCP Compute Machine VM. To access the app, go to http://34.139.240.24/login.php.
